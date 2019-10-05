@@ -4,6 +4,7 @@
 #include "Elevator.hpp"
 
 #include <iostream>
+#include <cstdio>
 
 namespace elevator {
 
@@ -12,6 +13,7 @@ Elevator::Elevator()
 	m_currentFloor = 0;
 	m_direction = Direction::NONE;
 	m_pPersistence = nullptr;
+	m_pElevatorTimer = nullptr;
 	m_isStarted = false;
 }
 
@@ -19,7 +21,6 @@ Elevator::~Elevator() {
 	m_isStarted = false;
 	m_currentFloor = 0;
 	m_direction = Direction::NONE;
-	delete m_pPersistence;
 }
 
 void Elevator::setId(std::string id) {
@@ -29,7 +30,8 @@ void Elevator::setId(std::string id) {
 void Elevator::start() {
 	std::cout << "Starting Elevator " << m_elevatorId << "\n";
 	m_isStarted = true;
-	m_pPersistence = new PersistedData(m_elevatorId);
+	m_pPersistence = std::make_shared<PersistedData>(m_elevatorId);
+	m_pElevatorTimer = std::make_unique<common::CoreTimer>();
 	m_pPersistence->start();
 
 	m_currentFloor = m_pPersistence->getPersistedFloor();
@@ -44,7 +46,12 @@ void Elevator::stop() {
 	m_isStarted = false;
 
 	m_pPersistence->savePersistedFloor(m_currentFloor);
+	m_pElevatorTimer->cancelTimer();
 	m_pPersistence->stop();
+}
+
+void Elevator::coreTimerCallback() {
+	// To be determined
 }
 
 } /* elevator */
