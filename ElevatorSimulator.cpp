@@ -58,6 +58,7 @@ void ElevatorSimulator::startElevator(int id) {
 		return;
 	}
 
+	m_pElevatorList[id]->setId(std::to_string(id));
 	m_pElevatorList[id]->start();
 }
 
