@@ -3,6 +3,7 @@
 
 #include "../Common/ComponentBase.hpp"
 #include "../Common/CoreTimer.cpp"
+#include "../Common/EventHandler.cpp"
 #include "PersistedData.cpp"
 
 #include <memory>
@@ -10,7 +11,8 @@
 namespace elevator {
 
 class Elevator : public common::ComponentBase,
-                 public common::CoreTimer::TimerTask {
+                 public common::CoreTimer::TimerTask,
+				 public common::EventHandler::EventListener {
 public:
 	Elevator();
 	~Elevator();
@@ -21,6 +23,7 @@ public:
 	void stop() override;
 
 	void coreTimerCallback() override;
+	void handleEvent(common::BaseEvent* pEvent) override;
 
 private:
 	enum Direction {
@@ -34,6 +37,7 @@ private:
 	std::string m_elevatorId;
 	std::shared_ptr<PersistedData> m_pPersistence;
 	std::unique_ptr<common::CoreTimer> m_pElevatorTimer;
+	std::shared_ptr<common::EventHandler> m_pEventHandler;
 	int m_currentFloor;
 	Direction m_direction;
 };
