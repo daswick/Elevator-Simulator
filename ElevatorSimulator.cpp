@@ -1,7 +1,4 @@
 #include "ElevatorSimulator.hpp"
-
-#include <thread>
-
 #include "Elevator/EntryPoint.cpp"
 #include "Controller/EntryPoint.cpp"
 

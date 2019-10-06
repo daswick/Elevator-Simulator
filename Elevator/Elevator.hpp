@@ -1,4 +1,3 @@
-
 #ifndef ELEVATOR_ELEVATOR_HPP
 #define EVELATOR_ELEVATOR_HPP
 
@@ -30,7 +29,7 @@ private:
 		DOWN = 0x2
 	};
 
-	const int k_floorChangeDuration = 1500;
+	const int k_floorChangeDuration = 2000;
 
 	std::string m_elevatorId;
 	std::shared_ptr<PersistedData> m_pPersistence;

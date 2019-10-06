@@ -1,10 +1,10 @@
 #ifndef ELEVATORSIMULATOR_HPP
 #define ELEVATORSIMULATOR_HPP
 
-#include <vector>
-
 #include "Elevator/Elevator.cpp"
 #include "Controller/Controller.cpp"
+
+#include <vector>
 
 class ElevatorSimulator {
 public:

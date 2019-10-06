@@ -2,9 +2,7 @@
 #define ELEVATOR_ELEVATOR_CPP
 
 #include "Elevator.hpp"
-
-#include <iostream>
-#include <cstdio>
+#include "../Common/SafePrint.cpp"
 
 namespace elevator {
 
@@ -21,6 +19,7 @@ Elevator::~Elevator() {
 	m_isStarted = false;
 	m_currentFloor = 0;
 	m_direction = Direction::NONE;
+	m_pElevatorTimer->cancelTimer();
 }
 
 void Elevator::setId(std::string id) {
@@ -28,7 +27,8 @@ void Elevator::setId(std::string id) {
 }
 
 void Elevator::start() {
-	std::cout << "Starting Elevator " << m_elevatorId << "\n";
+	SAFEPRINT("Starting Elevator " + m_elevatorId);
+
 	m_isStarted = true;
 	m_pPersistence = std::make_shared<PersistedData>(m_elevatorId);
 	m_pElevatorTimer = std::make_unique<common::CoreTimer>();
@@ -42,7 +42,8 @@ void Elevator::start() {
 }
 
 void Elevator::stop() {
-	std::cout << "Stopping Elevator " << m_elevatorId << "\n";
+	SAFEPRINT("Stopping Elevator " + m_elevatorId);
+
 	m_isStarted = false;
 
 	m_pPersistence->savePersistedFloor(m_currentFloor);

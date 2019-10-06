@@ -2,13 +2,12 @@
 #define CONTROLLER_CONTROLLER_CPP
 
 #include "Controller.hpp"
-
-#include <iostream>
+#include "../Common/SafePrint.cpp"
 
 namespace controller {
 
 Controller::Controller() {
-	// Not implemented yet
+	m_isStarted = false;
 }
 
 Controller::~Controller() {
@@ -16,12 +15,12 @@ Controller::~Controller() {
 }
 
 void Controller::start() {
-	std::cout << "Starting Controller\n";
+	SAFEPRINT("Starting Controller");
 	m_isStarted = true;
 }
 
 void Controller::stop() {
-	std::cout << "Stopping Controller\n";
+	SAFEPRINT("Stopping Controller");
 	m_isStarted = false;
 }
 

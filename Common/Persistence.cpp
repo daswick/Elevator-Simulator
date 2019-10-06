@@ -2,8 +2,8 @@
 #define COMMON_PERSISTENCE_CPP
 
 #include "Persistence.hpp"
+
 #include <fstream>
-#include <iostream>
 #include <iterator>
 
 namespace common {
