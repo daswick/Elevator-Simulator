@@ -3,10 +3,7 @@
 
 #include "Elevator.hpp"
 #include "../Common/SafePrint.cpp"
-
 #include "../Common/BaseEvent.hpp"
-
-#include <iostream>
 
 namespace elevator {
 
@@ -18,6 +15,7 @@ Elevator::Elevator()
 	m_pPersistence = nullptr;
 	m_pElevatorTimer = std::make_unique<common::CoreTimer>();
 	m_pEventHandler = std::make_shared<common::EventHandler>();
+	m_pSignalReceiver = std::make_unique<common::SignalReceiver>();
 }
 
 Elevator::~Elevator() {
@@ -42,10 +40,18 @@ void Elevator::start() {
 	m_pPersistence->start();
 	m_currentFloor = m_pPersistence->getPersistedFloor();
 
+	int elevatorId = std::stoi(m_elevatorId);
+	int elevatorKey = 0x10 | elevatorId;
+	m_pSignalReceiver->start(elevatorKey);
+
 	m_isStarted = true;
 }
 
 void Elevator::stop() {
+	if (!m_isStarted) {
+		return;
+	}
+
 	SAFEPRINT("Stopping Elevator " + m_elevatorId);
 
 	m_pPersistence->savePersistedFloor(m_currentFloor);
@@ -54,6 +60,8 @@ void Elevator::stop() {
 	m_pElevatorTimer->cancelTimer();
 
 	m_pEventHandler->removeListener(this);
+
+	m_pSignalReceiver->stop();
 
 	m_isStarted = false;
 }
