@@ -4,6 +4,7 @@
 #include "../Common/ComponentBase.hpp"
 #include "../Common/CoreTimer.cpp"
 #include "../Common/EventHandler.cpp"
+#include "../Common/signal/SignalReceiver.cpp"
 #include "PersistedData.cpp"
 
 #include <memory>
@@ -35,6 +36,7 @@ private:
 	const int k_floorChangeDuration = 2000;
 
 	std::string m_elevatorId;
+	std::unique_ptr<common::SignalReceiver> m_pSignalReceiver;
 	std::shared_ptr<PersistedData> m_pPersistence;
 	std::unique_ptr<common::CoreTimer> m_pElevatorTimer;
 	std::shared_ptr<common::EventHandler> m_pEventHandler;
