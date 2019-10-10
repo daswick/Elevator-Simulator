@@ -5,6 +5,8 @@
 #include "../Common/SafePrint.cpp"
 #include "../Common/BaseEvent.hpp"
 
+#include "SignalHandler.hpp"
+
 namespace elevator {
 
 Elevator::Elevator()
@@ -15,7 +17,7 @@ Elevator::Elevator()
 	m_pPersistence = nullptr;
 	m_pElevatorTimer = std::make_unique<common::CoreTimer>();
 	m_pEventHandler = std::make_shared<common::EventHandler>();
-	m_pSignalReceiver = std::make_unique<common::SignalReceiver>();
+	m_pSignalHandler = std::make_unique<SignalHandler>();
 }
 
 Elevator::~Elevator() {
@@ -40,11 +42,11 @@ void Elevator::start() {
 	m_pPersistence->start();
 	m_currentFloor = m_pPersistence->getPersistedFloor();
 
-	int elevatorId = std::stoi(m_elevatorId);
-	int elevatorKey = 0x10 | elevatorId;
-	m_pSignalReceiver->start(elevatorKey);
+	m_pSignalHandler->startReceiver(std::stoi(m_elevatorId));
 
 	m_isStarted = true;
+
+	m_pSignalHandler->sendSignal(SignalHandler::SignalTypes::ELEVATOR_FLOOR_STATUS, m_currentFloor);
 }
 
 void Elevator::stop() {
@@ -61,7 +63,7 @@ void Elevator::stop() {
 
 	m_pEventHandler->removeListener(this);
 
-	m_pSignalReceiver->stop();
+	m_pSignalHandler->stopReceiver();
 
 	m_isStarted = false;
 }

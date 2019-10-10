@@ -57,7 +57,7 @@ void SignalReceiver::receiveMessages() {
 			break;
 		}
 
-		SAFEPRINT("Received message: " + std::string(msg.m_data));
+		SAFEPRINT("Received message of type " + std::to_string(int(msg.m_data[0])) + " and data " + std::to_string(int(msg.m_data[1])));
 
 		// Send signal
 	}
