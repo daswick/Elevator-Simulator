@@ -12,7 +12,7 @@ namespace common {
 
 struct Signal {
 	long m_type;
-	char m_data[5];
+	char m_data[3];
 };
 
 class SignalReceiver {
