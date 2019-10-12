@@ -9,6 +9,7 @@
 #include "SignalHandler.cpp"
 
 #include <memory>
+#include <queue>
 
 namespace elevator {
 
@@ -39,6 +40,8 @@ private:
 	std::string m_elevatorId;
 	int m_currentFloor;
 	Direction m_direction;
+
+	std::priority_queue<int, std::vector<int>, std::greater<int>> m_destinationQueue;
 
 	std::shared_ptr<PersistedData> m_pPersistence;
 	std::unique_ptr<SignalHandler> m_pSignalHandler;

@@ -1,14 +1,16 @@
 #ifndef ELEVATOR_SIGNALHANDLER_HPP
 #define ELEVATOR_SIGNALHANDLER_HPP
 
+#include "../Common/EventHandler.cpp"
 #include "../Common/signal/SignalReceiver.cpp"
 #include "../Common/signal/SignalSender.cpp"
 
 namespace elevator {
 
-class SignalHandler {
+class SignalHandler : public common::SignalReceiver::ISignalListener {
 public:
-	SignalHandler();
+	SignalHandler() = default;
+	explicit SignalHandler(std::shared_ptr<common::EventHandler> pEventHandler);
 	~SignalHandler();
 
 	enum SignalTypes {
@@ -27,9 +29,12 @@ public:
 	void startReceiver(int elevatorId);
 	void stopReceiver();
 
+	void handleSignal(common::Signal msg) override;
+
 private:
 	std::unique_ptr<common::SignalReceiver> m_pSignalReceiver;
 	std::unique_ptr<common::SignalSender> m_pSignalSender;
+	std::shared_ptr<common::EventHandler> m_pEventHandler;
 
 	int m_messageId;
 	bool m_isRunning;

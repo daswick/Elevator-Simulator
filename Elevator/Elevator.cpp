@@ -17,7 +17,7 @@ Elevator::Elevator()
 	m_pPersistence = nullptr;
 	m_pElevatorTimer = std::make_unique<common::CoreTimer>();
 	m_pEventHandler = std::make_shared<common::EventHandler>();
-	m_pSignalHandler = std::make_unique<SignalHandler>();
+	m_pSignalHandler = std::make_unique<SignalHandler>(m_pEventHandler);
 }
 
 Elevator::~Elevator() {
@@ -77,9 +77,11 @@ void Elevator::handleEvent(common::BaseEvent* pEvent) {
 		return;
 	}
 
-	SAFEPRINT("Elevator " + m_elevatorId + " received event " + pEvent->getEventName());
+	if (pEvent->getEventName() == "AddDestinationEvent") {
+		AddDestinationEvent* pDestEvent = static_cast<AddDestinationEvent*>(pEvent);
+		SAFEPRINT("Elevator " + m_elevatorId + " received AddDestinationEvent for floor " + std::to_string(pDestEvent->getDestination()));
 
-	// TODO: Handle event
+	}
 }
 
 } /* elevator */
