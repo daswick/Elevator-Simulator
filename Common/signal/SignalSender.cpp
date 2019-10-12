@@ -10,7 +10,7 @@ namespace common {
 void SignalSender::sendMessage(int msgkey, Signal msg) {
 	key_t key = ftok(".", msgkey);
 
-	int messageId = msgget(key, IPC_CREAT | 0660);
+	int messageId = msgget(key, 0660);
 	if (messageId == ERROR) {
 		return;
 	}

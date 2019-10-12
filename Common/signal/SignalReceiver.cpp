@@ -11,7 +11,9 @@ SignalReceiver::SignalReceiver() {
 }
 
 SignalReceiver::~SignalReceiver() {
-	// Do nothing
+	while (m_pReceiverList.begin() != m_pReceiverList.end()) {
+		m_pReceiverList.erase(m_pReceiverList.begin());
+	}
 }
 
 void SignalReceiver::start(int key) {
@@ -45,6 +47,25 @@ void SignalReceiver::stop() {
 	m_isRunning = false;
 }
 
+void SignalReceiver::addListener(ISignalListener* pListener) {
+	if (pListener == nullptr) {
+		return;
+	}
+
+	m_pReceiverList.insert(pListener);
+}
+
+void SignalReceiver::removeListener(ISignalListener* pListener) {
+	if (pListener == nullptr) {
+		return;
+	}
+
+	std::set<ISignalListener*>::iterator it = m_pReceiverList.find(pListener);
+	if (it != m_pReceiverList.end()) {
+		m_pReceiverList.erase(it);
+	}
+}
+
 void SignalReceiver::receiveMessages() {
 	if (m_messageId == ERROR) {
 		return;
@@ -59,7 +80,9 @@ void SignalReceiver::receiveMessages() {
 
 		SAFEPRINT("Received message of type " + std::to_string(int(msg.m_data[0])) + " and data " + std::to_string(int(msg.m_data[1])));
 
-		// Send signal
+		for (ISignalListener* listener : m_pReceiverList) {
+			listener->handleSignal(msg);
+		}
 	}
 }
 
