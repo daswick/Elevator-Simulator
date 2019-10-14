@@ -1,16 +1,18 @@
-#ifndef ELEVATOR_SIGNALHANDLER_HPP
-#define ELEVATOR_SIGNALHANDLER_HPP
+#ifndef CONTROLLER_SIGNALHANDLER_HPP
+#define CONTROLLER_SIGNALHANDLER_HPP
 
 #include "../Common/EventHandler.cpp"
 #include "../Common/signal/SignalReceiver.cpp"
 #include "../Common/signal/SignalSender.cpp"
 
-namespace elevator {
+#include <vector>
+
+namespace controller {
 
 class SignalHandler : public common::SignalReceiver::ISignalListener {
 public:
 	SignalHandler() = delete;
-	explicit SignalHandler(std::shared_ptr<common::EventHandler> pEventHandler);
+	SignalHandler(std::shared_ptr<common::EventHandler> pEventHandler, int numElevators);
 	~SignalHandler() = default;
 
 	enum SignalTypes {
@@ -24,10 +26,10 @@ public:
 		FLOOR_RESERVED_1 = 0x80
 	};
 
-	void sendSignal(SignalTypes type, int data);
+	void sendSignal(SignalTypes type, int data, int elevator);
 
-	void startReceiver(int elevatorId);
-	void stopReceiver();
+	void startReceivers();
+	void stopReceivers();
 
 	void handleSignal(common::Signal msg) override;
 
@@ -37,10 +39,12 @@ private:
 	std::shared_ptr<common::EventHandler> m_pEventHandler;
 
 	int m_messageId;
-	int m_controllerId;
+	int m_elevatorCount;
+	std::vector<int> m_elevatorIdList;
 	bool m_isRunning;
+
 };
 
-} /* elevator */
+} /* controller */
 
 #endif

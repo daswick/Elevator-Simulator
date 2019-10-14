@@ -31,11 +31,11 @@ ElevatorSimulator::~ElevatorSimulator() {
 }
 
 void ElevatorSimulator::start() {
+	startController(m_elevatorCount);
+
 	for (int i = 0; i < m_elevatorCount; i++) {
 		startElevator(i);
 	}
-
-	startController();
 }
 
 void ElevatorSimulator::stop() {
@@ -71,9 +71,10 @@ void ElevatorSimulator::stopElevator(int id) {
 	m_pElevatorList[id]->stop();
 }
 
-void ElevatorSimulator::startController() {
+void ElevatorSimulator::startController(int numElevators) {
 	if (m_pController == nullptr) {
 		m_pController = static_cast<controller::Controller*>(controller::getComponent());
+		m_pController->setElevatorCount(numElevators);
 	}
 
 	if (m_pController->hasStarted()) {

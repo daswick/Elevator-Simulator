@@ -9,6 +9,7 @@
 #include "SignalHandler.cpp"
 
 #include <memory>
+#include <mutex>
 #include <queue>
 
 namespace elevator {
@@ -41,12 +42,15 @@ private:
 	int m_currentFloor;
 	Direction m_direction;
 
+	std::mutex m_queueMutex;
 	std::priority_queue<int, std::vector<int>, std::greater<int>> m_destinationQueue;
 
 	std::shared_ptr<PersistedData> m_pPersistence;
 	std::unique_ptr<SignalHandler> m_pSignalHandler;
 	std::unique_ptr<common::CoreTimer> m_pElevatorTimer;
 	std::shared_ptr<common::EventHandler> m_pEventHandler;
+
+	void addDestination(int destination);
 };
 
 } /* elevator */

@@ -19,8 +19,6 @@ void SignalSender::sendMessage(int msgkey, Signal msg) {
 
 	if (msgsnd(messageId, &msg, 5, 0) == ERROR) {
 		SAFEPRINT("Failed to send message");
-	} else {
-		SAFEPRINT("Sent message of type " + std::to_string(int(msg.m_data[0])) + " and data " + std::to_string(int(msg.m_data[1])));
 	}
 }
 

@@ -24,7 +24,7 @@ private:
 	void startElevator(int id);
 	void stopElevator(int id);
 
-	void startController();
+	void startController(int numElevators);
 	void stopController();
 };
 

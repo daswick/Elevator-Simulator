@@ -15,16 +15,12 @@ SignalHandler::SignalHandler(std::shared_ptr<common::EventHandler> pEventHandler
 	m_pEventHandler = pEventHandler;
 }
 
-SignalHandler::~SignalHandler() {
-
-}
-
 void SignalHandler::sendSignal(SignalTypes type, int data) {
 	common::Signal message;
 	message.m_data[0] = static_cast<char>(type);
 	message.m_data[1] = data;
 
-	m_pSignalSender->sendMessage(m_messageId, message);
+	m_pSignalSender->sendMessage(m_controllerId, message);
 }
 
 void SignalHandler::startReceiver(int elevatorId) {
@@ -33,6 +29,7 @@ void SignalHandler::startReceiver(int elevatorId) {
 	}
 
 	m_messageId = 0x10 | elevatorId;
+	m_controllerId = 0x20 | elevatorId;
 
 	m_pSignalReceiver->addListener(this);
 	m_pSignalReceiver->start(m_messageId);
@@ -45,13 +42,16 @@ void SignalHandler::stopReceiver() {
 		return;
 	}
 
-	m_pSignalReceiver->stop();
+	m_pSignalReceiver->stop(m_messageId);
 	m_pSignalReceiver->removeListener(this);
 
 	m_isRunning = false;
 }
 
 void SignalHandler::handleSignal(common::Signal msg) {
+	SAFEPRINT("Elevator received signal " + m_pSignalReceiver->getSignalName(int(msg.m_data[0]))
+			+ " with data " + std::to_string(int(msg.m_data[1])));
+
 	if (int(msg.m_data[0]) == static_cast<int>(SignalTypes::CONTROLLER_ADD_DESTINATION)) {
 		AddDestinationEvent* pEvent = new AddDestinationEvent(int(msg.m_data[1]));
 		m_pEventHandler->publishEvent(pEvent);

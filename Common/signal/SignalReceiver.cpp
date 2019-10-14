@@ -7,44 +7,52 @@ namespace common {
 
 SignalReceiver::SignalReceiver() {
 	m_isRunning = false;
-	m_messageId = ERROR;
 }
 
 SignalReceiver::~SignalReceiver() {
 	while (m_pReceiverList.begin() != m_pReceiverList.end()) {
 		m_pReceiverList.erase(m_pReceiverList.begin());
 	}
+
+	while (m_messageIds.begin() != m_messageIds.end()) {
+		m_messageIds.erase(m_messageIds.begin());
+	}
 }
 
 void SignalReceiver::start(int key) {
-	if (m_isRunning) {
-		return;
+	{
+		std::lock_guard<std::mutex> guard(m_messageMutex);
+		std::set<int>::iterator it = m_messageIds.find(key);;
+		if (it != m_messageIds.end()) {
+			return;
+		}
+		m_messageIds.insert(key);
 	}
 
-	SAFEPRINT("SignalHandler::start()");
-
-	m_key = ftok(".", key);
 	m_isRunning = true;
-	m_messageId = msgget(m_key, IPC_CREAT | 0660);
+	key_t msgkey = ftok(".", key);
+	int messageId = msgget(msgkey, IPC_CREAT | 0660);
 
-	m_messageThread = std::thread(&common::SignalReceiver::receiveMessages, this);
-	m_messageThread.detach();
+	std::thread messageThread = std::thread(&common::SignalReceiver::receiveMessages, this, messageId);
+	messageThread.detach();
 }
 
-void SignalReceiver::stop() {
-	if (!m_isRunning) {
-		return;
+void SignalReceiver::stop(int key) {
+	{
+		std::lock_guard<std::mutex> guard(m_messageMutex);
+		std::set<int>::iterator it = m_messageIds.find(key);;
+		if (it != m_messageIds.end()) {
+			return;
+		}
+		m_messageIds.erase(it);
 	}
 
-	SAFEPRINT("SignalReceiver::stop()");
+	key_t msgkey = ftok(".", key);
+	int messageId = msgget(msgkey, IPC_CREAT | 0660);
 
-	if (m_messageId == ERROR) {
-		return;
-	}
+	m_isRunning = (m_messageIds.size() == 0);
 
-	msgctl(m_messageId, IPC_RMID, NULL);
-
-	m_isRunning = false;
+	msgctl(messageId, IPC_RMID, NULL);
 }
 
 void SignalReceiver::addListener(ISignalListener* pListener) {
@@ -66,19 +74,21 @@ void SignalReceiver::removeListener(ISignalListener* pListener) {
 	}
 }
 
-void SignalReceiver::receiveMessages() {
-	if (m_messageId == ERROR) {
+std::string SignalReceiver::getSignalName(int id) {
+	return m_signalNames[id];
+}
+
+void SignalReceiver::receiveMessages(int messageId) {
+	if (messageId == ERROR) {
 		return;
 	}
 
 	Signal msg;
 	while (true) {
-		int status = msgrcv(m_messageId, &msg, 5, 1, 0);
+		int status = msgrcv(messageId, &msg, 5, 1, 0);
 		if (status == ERROR) {
 			break;
 		}
-
-		SAFEPRINT("Received message of type " + std::to_string(int(msg.m_data[0])) + " and data " + std::to_string(int(msg.m_data[1])));
 
 		for (ISignalListener* listener : m_pReceiverList) {
 			listener->handleSignal(msg);
