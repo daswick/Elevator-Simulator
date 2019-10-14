@@ -5,7 +5,7 @@ int main() {
 
 	simulator.start();
 
-	std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+	std::this_thread::sleep_for(std::chrono::milliseconds(10000));
 
 	simulator.stop();
 

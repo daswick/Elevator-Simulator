@@ -3,6 +3,8 @@
 
 #define ERROR -1
 
+#include <map>
+#include <mutex>
 #include <set>
 #include <string>
 #include <sys/ipc.h>
@@ -22,7 +24,7 @@ public:
 	~SignalReceiver();
 
 	void start(int key);
-	void stop();
+	void stop(int key);
 
 	class ISignalListener {
 	public:
@@ -35,15 +37,28 @@ public:
 	void addListener(ISignalListener* pListener);
 	void removeListener(ISignalListener* pListener);
 
-private:
-	std::thread m_messageThread;
-	key_t m_key;
-	bool m_isRunning;
-	int m_messageId;
+	std::string getSignalName(int id);
 
+private:
+	bool m_isRunning;
+
+	std::mutex m_messageMutex;
+	std::set<int> m_messageIds;
 	std::set<ISignalListener*> m_pReceiverList;
 
-	void receiveMessages();
+	void receiveMessages(int messageId);
+
+	std::map<int, std::string> m_signalNames {
+		{0x01, "ELEVATOR_FLOOR_STATUS"},
+		{0x02, "ELEVATOR_DESTINATION_REACHED"},
+		{0x04, "ELEVATOR_DIRECTION_CHANGE"},
+		{0x08, "ELEVATOR_RESERVED_2"},
+		{0x10, "CONTROLLER_ADD_DESTINATION"},
+		{0x20, "CONTROLLER_RESERVED_1"},
+		{0x40, "FLOOR_BUTTON_PRESSED"},
+		{0x80, "FLOOR_RESERVED_1"}
+
+	};
 
 };
 
