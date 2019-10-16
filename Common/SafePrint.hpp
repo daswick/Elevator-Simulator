@@ -1,10 +1,12 @@
 #ifndef COMMON_SAFEPRINT_HPP
 #define COMMON_SAFEPRINT_HPP
 
-#include <thread>
+#include <memory>
 #include <mutex>
 #include <queue>
-#include <memory>
+#include <thread>
+
+#define SAFEPRINT(message) common::SafePrint::getInstance()->printMessage(message)
 
 namespace common {
 
@@ -34,4 +36,4 @@ private:
 
 } /* common */
 
-#endif
+#endif /* COMMON_SAFEPRINT_HPP */

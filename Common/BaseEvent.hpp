@@ -10,7 +10,7 @@ public:
 	BaseEvent() = default;
 	~BaseEvent() = default;
 
-	std::string getEventName() { return m_eventName; }
+	inline std::string getEventName() { return m_eventName; }
 
 protected:
 	std::string m_eventName;
@@ -18,4 +18,4 @@ protected:
 
 } /* common */
 
-#endif
+#endif /* COMMON_BASEEVENT_HPP */

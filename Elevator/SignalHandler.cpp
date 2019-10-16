@@ -1,8 +1,8 @@
-#ifndef ELEVATOR_SIGNALHANDLER_CPP
-#define ELEVATOR_SIGNALHANDLER_CPP
-
 #include "SignalHandler.hpp"
+
 #include "events/AddDestinationEvent.hpp"
+
+#include "../Common/SafePrint.hpp"
 
 namespace elevator {
 
@@ -10,7 +10,6 @@ SignalHandler::SignalHandler(std::shared_ptr<common::EventHandler> pEventHandler
 	m_isRunning = false;
 	m_messageId = 0;
 
-	m_pSignalSender = std::make_unique<common::SignalSender>();
 	m_pSignalReceiver = std::make_unique<common::SignalReceiver>();
 	m_pEventHandler = pEventHandler;
 }
@@ -20,7 +19,7 @@ void SignalHandler::sendSignal(SignalTypes type, int data) {
 	message.m_data[0] = static_cast<char>(type);
 	message.m_data[1] = data;
 
-	m_pSignalSender->sendMessage(m_controllerId, message);
+	m_pSignalReceiver->sendMessage(m_controllerId, message);
 }
 
 void SignalHandler::startReceiver(int elevatorId) {
@@ -61,5 +60,3 @@ void SignalHandler::handleSignal(common::Signal msg) {
 }
 
 } /* elevator */
-
-#endif

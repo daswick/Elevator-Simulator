@@ -1,9 +1,8 @@
 #ifndef CONTROLLER_SIGNALHANDLER_HPP
 #define CONTROLLER_SIGNALHANDLER_HPP
 
-#include "../Common/EventHandler.cpp"
-#include "../Common/signal/SignalReceiver.cpp"
-#include "../Common/signal/SignalSender.cpp"
+#include "../Common/EventHandler.hpp"
+#include "../Common/signal/SignalReceiver.hpp"
 
 #include <vector>
 
@@ -35,16 +34,14 @@ public:
 
 private:
 	std::unique_ptr<common::SignalReceiver> m_pSignalReceiver;
-	std::unique_ptr<common::SignalSender> m_pSignalSender;
 	std::shared_ptr<common::EventHandler> m_pEventHandler;
 
 	int m_messageId;
 	int m_elevatorCount;
 	std::vector<int> m_elevatorIdList;
 	bool m_isRunning;
-
 };
 
 } /* controller */
 
-#endif
+#endif /* CONTROLLER_SIGNALHANDLER_HPP */

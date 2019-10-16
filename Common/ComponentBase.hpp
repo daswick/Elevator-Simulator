@@ -11,9 +11,7 @@ public:
 	virtual void start() = 0;
 	virtual void stop() = 0;
 
-	bool hasStarted() { 
-		return m_isStarted;
-	}
+	inline bool hasStarted() { return m_isStarted; }
 
 protected:
 	bool m_isStarted;
@@ -21,5 +19,4 @@ protected:
 
 } /* common */
 
-#endif
-
+#endif /* COMMON_COMPONENTBASE_HPP */

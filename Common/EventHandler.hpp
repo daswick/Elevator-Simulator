@@ -10,7 +10,7 @@ namespace common {
 
 class EventHandler {
 public:
-	EventHandler();
+	EventHandler() = default;
 	~EventHandler();
 
 	class EventListener {
@@ -18,10 +18,10 @@ public:
 		EventListener() = default;
 		~EventListener() = default;
 
-		virtual void handleEvent(BaseEvent* pEvent) { /* not implemented */}
+		virtual inline void handleEvent(BaseEvent* pEvent) { /* not implemented */}
 
-		void setListenerName(std::string name) { m_listenerName = name; }
-		std::string getListenerName() { return m_listenerName; }
+		inline void setListenerName(std::string name) { m_listenerName = name; }
+		inline std::string getListenerName() { return m_listenerName; }
 
 	private:
 		std::string m_listenerName;
@@ -34,9 +34,8 @@ public:
 
 private:
 	std::set<EventListener*> m_listenerSet;
-
 };
 
 } /* common */
 
-#endif
+#endif /* COMMON_EVENTHANDLER_HPP */

@@ -15,14 +15,12 @@ public:
 	~AddDestinationEvent() = default;
 
 	int getDestination() { return m_destination; }
-	std::string getEventName() {return m_eventName; }
 
 private:
 	int m_destination;
 	const std::string k_eventName = "AddDestinationEvent";
-
 };
 
 } /* elevator */
 
-#endif
+#endif /* ELEVATOR_ADDDESTINATIONEVENT_HPP */

@@ -20,7 +20,7 @@ struct Signal {
 
 class SignalReceiver {
 public:
-	SignalReceiver();
+	SignalReceiver() = default;
 	~SignalReceiver();
 
 	void start(int key);
@@ -31,7 +31,7 @@ public:
 		ISignalListener() = default;
 		~ISignalListener() = default;
 
-		virtual void handleSignal(Signal msg) { /* Not implemented */ }
+		virtual inline void handleSignal(Signal msg) { /* Not implemented */ }
 	};
 
 	void addListener(ISignalListener* pListener);
@@ -39,8 +39,10 @@ public:
 
 	std::string getSignalName(int id);
 
+	void sendMessage(int msgkey, Signal msg);
+
 private:
-	bool m_isRunning;
+	bool m_isRunning = false;
 
 	std::mutex m_messageMutex;
 	std::set<int> m_messageIds;
@@ -57,12 +59,9 @@ private:
 		{0x20, "CONTROLLER_RESERVED_1"},
 		{0x40, "FLOOR_BUTTON_PRESSED"},
 		{0x80, "FLOOR_RESERVED_1"}
-
 	};
-
 };
-
 
 } /* common */
 
-#endif
+#endif /* COMMON_SIGNALRECEIVER_HPP */

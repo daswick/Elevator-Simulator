@@ -1,12 +1,7 @@
-#ifndef COMMON_SAFEPRINT_CPP
-#define COMMON_SAFEPRINT_CPP
-
 #include "SafePrint.hpp"
 
 #include <cstdio>
 #include <ctime>
-
-#define SAFEPRINT(message) common::SafePrint::getInstance()->printMessage(message)
 
 namespace common {
 
@@ -60,5 +55,3 @@ void SafePrint::printMessages() {
 }
 
 } /* common */
-
-#endif

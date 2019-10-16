@@ -1,22 +1,9 @@
-#ifndef COMMON_PERSISTENCE_CPP
-#define COMMON_PERSISTENCE_CPP
-
 #include "Persistence.hpp"
 
 #include <fstream>
 #include <iterator>
 
 namespace common {
-
-Persistence::Persistence() :
-	m_isDataLoaded(false)
-{
-	// Intentionally left empty
-}
-
-Persistence::~Persistence() {
-	// Intentionally left empty
-}
 
 void Persistence::loadPersistedData(std::string fileName) {
 	if (m_isDataLoaded) {
@@ -104,5 +91,3 @@ bool Persistence::getPersistedData(std::string key, std::string& value) {
 }
 
 } /* common */
-
-#endif

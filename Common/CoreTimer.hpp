@@ -38,4 +38,4 @@ private:
 
 } /* common */
 
-#endif
+#endif /* COMMON_CORETIMER_HPP */

@@ -1,8 +1,8 @@
 #ifndef ELEVATORSIMULATOR_HPP
 #define ELEVATORSIMULATOR_HPP
 
-#include "Elevator/Elevator.cpp"
-#include "Controller/Controller.cpp"
+#include "Controller/Controller.hpp"
+#include "Elevator/Elevator.hpp"
 
 #include <vector>
 
@@ -28,4 +28,4 @@ private:
 	void stopController();
 };
 
-#endif
+#endif /* ELEVATORSIMULATOR_HPP */

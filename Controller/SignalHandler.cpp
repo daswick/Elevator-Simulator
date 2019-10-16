@@ -1,7 +1,8 @@
-#ifndef CONTROLLER_SIGNALHANDLER_CPP
-#define CONTROLLER_SIGNALHANDLER_CPP
-
 #include "SignalHandler.hpp"
+
+#include "events/FloorStatusEvent.hpp"
+
+#include "../Common/SafePrint.hpp"
 
 namespace controller {
 
@@ -10,7 +11,6 @@ SignalHandler::SignalHandler(std::shared_ptr<common::EventHandler> pEventHandler
 	m_elevatorCount = numElevators;
 	m_messageId = 0;
 
-	m_pSignalSender = std::make_unique<common::SignalSender>();
 	m_pSignalReceiver = std::make_unique<common::SignalReceiver>();
 	m_pEventHandler = pEventHandler;
 }
@@ -25,7 +25,7 @@ void SignalHandler::sendSignal(SignalTypes type, int data, int elevator) {
 	msg.m_data[1] = data;
 
 	int elevatorId = 0x10 | elevator;
-	m_pSignalSender->sendMessage(elevatorId, msg);
+	m_pSignalReceiver->sendMessage(elevatorId, msg);
 }
 
 void SignalHandler::startReceivers() {
@@ -59,5 +59,3 @@ void SignalHandler::handleSignal(common::Signal msg) {
 }
 
 } /* controller */
-
-#endif
