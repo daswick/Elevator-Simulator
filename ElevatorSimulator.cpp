@@ -1,6 +1,4 @@
 #include "ElevatorSimulator.hpp"
-#include "Elevator/EntryPoint.cpp"
-#include "Controller/EntryPoint.cpp"
 
 ElevatorSimulator::ElevatorSimulator() {
 	m_elevatorCount = 2;
@@ -48,14 +46,13 @@ void ElevatorSimulator::stop() {
 
 void ElevatorSimulator::startElevator(int id) {
 	if (m_pElevatorList[id] == nullptr) {
-		m_pElevatorList[id] = static_cast<elevator::Elevator*>(elevator::getComponent());
+		m_pElevatorList[id] = new elevator::Elevator(std::to_string(id));
 	}
 
 	if (m_pElevatorList[id]->hasStarted()) {
 		return;
 	}
 
-	m_pElevatorList[id]->setId(std::to_string(id));
 	m_pElevatorList[id]->start();
 }
 
@@ -73,8 +70,7 @@ void ElevatorSimulator::stopElevator(int id) {
 
 void ElevatorSimulator::startController(int numElevators) {
 	if (m_pController == nullptr) {
-		m_pController = static_cast<controller::Controller*>(controller::getComponent());
-		m_pController->setElevatorCount(numElevators);
+		m_pController = new controller::Controller(numElevators);
 	}
 
 	if (m_pController->hasStarted()) {
@@ -94,5 +90,4 @@ void ElevatorSimulator::stopController() {
 	}
 
 	m_pController->stop();
-	
 }

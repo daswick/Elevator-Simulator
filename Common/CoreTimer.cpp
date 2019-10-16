@@ -1,6 +1,3 @@
-#ifndef COMMON_CORETIMER_CPP
-#define COMMON_CORETIMER_CPP
-
 #include "CoreTimer.hpp"
 
 namespace common {
@@ -93,5 +90,3 @@ void CoreTimer::sleepFor(int duration) {
 }
 
 } /* common */
-
-#endif

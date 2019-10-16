@@ -1,13 +1,8 @@
-#ifndef COMMON_SIGNALRECEIVER_CPP
-#define COMMON_SIGNALRECEIVER_CPP
-
 #include "SignalReceiver.hpp"
 
-namespace common {
+#include "../SafePrint.hpp"
 
-SignalReceiver::SignalReceiver() {
-	m_isRunning = false;
-}
+namespace common {
 
 SignalReceiver::~SignalReceiver() {
 	while (m_pReceiverList.begin() != m_pReceiverList.end()) {
@@ -78,6 +73,21 @@ std::string SignalReceiver::getSignalName(int id) {
 	return m_signalNames[id];
 }
 
+void SignalReceiver::sendMessage(int msgkey, Signal msg) {
+	key_t key = ftok(".", msgkey);
+
+	int messageId = msgget(key, 0660);
+	if (messageId == ERROR) {
+		return;
+	}
+
+	msg.m_type = 1;
+
+	if (msgsnd(messageId, &msg, 5, 0) == ERROR) {
+		SAFEPRINT("Failed to send message");
+	}
+}
+
 void SignalReceiver::receiveMessages(int messageId) {
 	if (messageId == ERROR) {
 		return;
@@ -97,5 +107,3 @@ void SignalReceiver::receiveMessages(int messageId) {
 }
 
 } /* common */
-
-#endif

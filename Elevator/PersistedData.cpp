@@ -1,6 +1,3 @@
-#ifndef ELEVATOR_PERSISTEDDATA_CPP
-#define ELEVATOR_PERSISTEDDATA_CPP
-
 #include "PersistedData.hpp"
 
 namespace elevator {
@@ -38,5 +35,3 @@ void PersistedData::savePersistedFloor(int floorNumber) {
 }
 
 } /* elevator */
-
-#endif

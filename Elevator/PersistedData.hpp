@@ -1,8 +1,7 @@
-
 #ifndef ELEVATOR_PERSISTEDDATA_HPP
 #define ELEVATOR_PERSISTEDDATA_HPP
 
-#include "../Common/Persistence.cpp"
+#include "../Common/Persistence.hpp"
 
 #include <string>
 
@@ -26,4 +25,4 @@ private:
 
 } /* elevator */
 
-#endif
+#endif /* ELEVATOR_PERSISTEDDATA_HPP */

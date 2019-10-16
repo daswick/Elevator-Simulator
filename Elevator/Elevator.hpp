@@ -1,12 +1,13 @@
 #ifndef ELEVATOR_ELEVATOR_HPP
 #define EVELATOR_ELEVATOR_HPP
 
-#include "../Common/ComponentBase.hpp"
-#include "../Common/CoreTimer.cpp"
-#include "../Common/EventHandler.cpp"
+#include "events/AddDestinationEvent.hpp"
+#include "PersistedData.hpp"
+#include "SignalHandler.hpp"
 
-#include "PersistedData.cpp"
-#include "SignalHandler.cpp"
+#include "../Common/ComponentBase.hpp"
+#include "../Common/CoreTimer.hpp"
+#include "../Common/EventHandler.hpp"
 
 #include <memory>
 #include <mutex>
@@ -18,10 +19,9 @@ class Elevator : public common::ComponentBase,
                  public common::CoreTimer::TimerTask,
 				 public common::EventHandler::EventListener {
 public:
-	Elevator();
-	~Elevator();
-
-	void setId(std::string id);
+	Elevator() = delete;
+	explicit Elevator(std::string id);
+	virtual ~Elevator();
 
 	void start() override;
 	void stop() override;
@@ -55,4 +55,4 @@ private:
 
 } /* elevator */
 
-#endif
+#endif /* EVELATOR_ELEVATOR_HPP */

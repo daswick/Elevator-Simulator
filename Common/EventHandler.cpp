@@ -1,16 +1,10 @@
-#ifndef COMMON_EVENTHANDLER_CPP
-#define COMMON_EVENTHANDLER_CPP
-
 #include "EventHandler.hpp"
-#include "SafePrint.cpp"
+
+#include "SafePrint.hpp"
 
 #include <iterator>
 
 namespace common {
-
-EventHandler::EventHandler() {
-	// Do nothing
-}
 
 EventHandler::~EventHandler() {
 	while (m_listenerSet.begin() != m_listenerSet.end()) {
@@ -50,5 +44,3 @@ void EventHandler::publishEvent(BaseEvent* pEvent) {
 }
 
 } /* common */
-
-#endif

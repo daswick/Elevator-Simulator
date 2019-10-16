@@ -1,16 +1,16 @@
 #ifndef COMMON_PERSISTENCE_HPP
 #define COMMON_PERSISTENCE_HPP
 
-#include <string>
-#include <mutex>
 #include <map>
+#include <mutex>
+#include <string>
 
 namespace common {
 
 class Persistence {
 public:
-	Persistence();
-	~Persistence();
+	Persistence() = default;
+	~Persistence() = default;
 
 protected:
 	void loadPersistedData(std::string fileName);
@@ -29,9 +29,9 @@ private:
 	std::map<std::string, std::string> m_dataMap;
 	std::map<std::string, bool> m_dirtyMap;
 
-	bool m_isDataLoaded;
+	bool m_isDataLoaded = false;
 };
 
 } /* common */
 
-#endif
+#endif /* COMMON_PERSISTENCE_HPP */

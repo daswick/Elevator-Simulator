@@ -1,9 +1,8 @@
 #ifndef ELEVATOR_SIGNALHANDLER_HPP
 #define ELEVATOR_SIGNALHANDLER_HPP
 
-#include "../Common/EventHandler.cpp"
-#include "../Common/signal/SignalReceiver.cpp"
-#include "../Common/signal/SignalSender.cpp"
+#include "../Common/EventHandler.hpp"
+#include "../Common/signal/SignalReceiver.hpp"
 
 namespace elevator {
 
@@ -33,7 +32,6 @@ public:
 
 private:
 	std::unique_ptr<common::SignalReceiver> m_pSignalReceiver;
-	std::unique_ptr<common::SignalSender> m_pSignalSender;
 	std::shared_ptr<common::EventHandler> m_pEventHandler;
 
 	int m_messageId;
@@ -43,4 +41,4 @@ private:
 
 } /* elevator */
 
-#endif
+#endif /* ELEVATOR_SIGNALHANDLER_HPP */

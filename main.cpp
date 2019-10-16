@@ -1,4 +1,4 @@
-#include "ElevatorSimulator.cpp"
+#include "ElevatorSimulator.hpp"
 
 int main() {
 	ElevatorSimulator simulator;

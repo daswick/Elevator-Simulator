@@ -1,16 +1,14 @@
-#ifndef ELEVATOR_ELEVATOR_CPP
-#define ELEVATOR_ELEVATOR_CPP
-
 #include "Elevator.hpp"
-#include "../Common/SafePrint.cpp"
-#include "../Common/BaseEvent.hpp"
 
 #include "SignalHandler.hpp"
 
+#include "../Common/SafePrint.hpp"
+
 namespace elevator {
 
-Elevator::Elevator()
+Elevator::Elevator(std::string id)
 {
+	m_elevatorId = id;
 	m_isStarted = false;
 	m_currentFloor = 0;
 	m_direction = Direction::NONE;
@@ -18,6 +16,7 @@ Elevator::Elevator()
 	m_pElevatorTimer = std::make_unique<common::CoreTimer>();
 	m_pEventHandler = std::make_shared<common::EventHandler>();
 	m_pSignalHandler = std::make_unique<SignalHandler>(m_pEventHandler);
+	m_pPersistence = std::make_shared<PersistedData>(m_elevatorId);
 }
 
 Elevator::~Elevator() {
@@ -25,10 +24,6 @@ Elevator::~Elevator() {
 	m_currentFloor = 0;
 	m_direction = Direction::NONE;
 	m_pElevatorTimer->cancelTimer();
-}
-
-void Elevator::setId(std::string id) {
-	m_elevatorId = id;
 }
 
 void Elevator::start() {
@@ -42,7 +37,6 @@ void Elevator::start() {
 
 	m_pEventHandler->addListener(this);
 
-	m_pPersistence = std::make_shared<PersistedData>(m_elevatorId);
 	m_pPersistence->start();
 	m_currentFloor = m_pPersistence->getPersistedFloor();
 
@@ -60,7 +54,7 @@ void Elevator::stop() {
 
 	SAFEPRINT("Stopping Elevator " + m_elevatorId);
 
-	//m_pPersistence->savePersistedFloor(m_currentFloor);
+	m_pPersistence->savePersistedFloor(m_currentFloor);
 	m_pPersistence->stop();
 
 	m_pElevatorTimer->cancelTimer();
@@ -107,7 +101,6 @@ void Elevator::addDestination(int destination) {
 		return;
 	}
 
-
 	{
 		std::lock_guard<std::mutex> guard(m_queueMutex);
 		m_destinationQueue.push(destination);
@@ -121,5 +114,3 @@ void Elevator::addDestination(int destination) {
 }
 
 } /* elevator */
-
-#endif
