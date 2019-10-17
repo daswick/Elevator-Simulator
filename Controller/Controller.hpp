@@ -1,13 +1,15 @@
 #ifndef CONTROLLER_CONTROLLER_HPP
 #define CONTROLLER_CONTROLLER_HPP
 
+#include "events/FloorStatusEvent.hpp"
 #include "SignalHandler.hpp"
 
 #include "../Common/ComponentBase.hpp"
 
 namespace controller {
 
-class Controller : public common::ComponentBase {
+class Controller : public common::ComponentBase,
+                   public common::EventHandler::EventListener {
 public:
 	Controller() = delete;
 	explicit Controller(int numElevators);
@@ -15,6 +17,8 @@ public:
 
 	void start() override;
 	void stop() override;
+
+	void handleEvent(common::BaseEvent* pEvent);
 
 private:
 	struct ElevatorStatus {

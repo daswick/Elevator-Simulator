@@ -21,7 +21,7 @@ protected:
 	bool getPersistedData(std::string key, std::string& value);
 
 private:
-	const std::string k_persistPath = "data/";
+	const std::string k_persistPath = "../data/";
 
 	std::mutex m_dataMutex;
 	std::mutex m_dirtyMutex;

@@ -56,6 +56,15 @@ void SignalHandler::stopReceivers() {
 void SignalHandler::handleSignal(common::Signal msg) {
 	SAFEPRINT("Controller received signal " + m_pSignalReceiver->getSignalName(int(msg.m_data[0]))
 			+ " with data " + std::to_string(int(msg.m_data[1])));
+
+	if (int(msg.m_data[0]) == static_cast<int>(SignalTypes::ELEVATOR_FLOOR_STATUS)) {
+		int floor = int(msg.m_data[1]);
+		int elevatorId = int(msg.m_data[2]) & 0xF;
+		FloorStatusEvent* pEvent = new FloorStatusEvent(floor, elevatorId);
+		m_pEventHandler->publishEvent(pEvent);
+	} else {
+		// TODO: Other signals
+	}
 }
 
 } /* controller */
