@@ -7,17 +7,19 @@ namespace controller {
 
 class FloorStatusEvent : public common::BaseEvent {
 public:
-	FloorStatusEvent(int floor) :
-		floorStatus(floor)
+	FloorStatusEvent(int floor, int elevator) :
+		floorStatus(floor), elevatorId(elevator)
 	{
 		m_eventName = k_eventName;
 	}
 	~FloorStatusEvent() = default;
 
 	int getFloorStatus() { return floorStatus; }
+	int getElevatorId() { return elevatorId; }
 
 private:
 	int floorStatus;
+	int elevatorId;
 	const std::string k_eventName = "FloorStatusEvent";
 };
 

@@ -17,7 +17,7 @@ namespace elevator {
 
 class Elevator : public common::ComponentBase,
                  public common::CoreTimer::TimerTask,
-				 public common::EventHandler::EventListener {
+                 public common::EventHandler::EventListener {
 public:
 	Elevator() = delete;
 	explicit Elevator(std::string id);

@@ -40,6 +40,7 @@ void Elevator::start() {
 	m_pPersistence->start();
 	m_currentFloor = m_pPersistence->getPersistedFloor();
 
+	SAFEPRINT("Elevator " + m_elevatorId + " started on floor " + std::to_string(m_currentFloor));
 	m_pSignalHandler->startReceiver(std::stoi(m_elevatorId));
 
 	m_isStarted = true;
