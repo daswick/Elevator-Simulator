@@ -15,11 +15,11 @@ public:
 		TimerTask() = default;
 		~TimerTask() = default;
 
-		virtual void coreTimerCallback() = 0;
+		virtual void coreTimerCallback(int id) = 0;
 	};
 
-	void startSingleTimer(TimerTask* timerListener, int duration);
-	void startRepeatingTimer(TimerTask* timerListener, int duration);
+	void startSingleTimer(TimerTask* timerListener, int duration, int timerId);
+	void startRepeatingTimer(TimerTask* timerListener, int duration, int timerId);
 	void cancelTimer();
 	bool isTimerRunning();
 
@@ -30,8 +30,10 @@ private:
 
 	TimerTask* m_timerListener;
 	int m_timerDuration;
+	int m_timerId;
 	bool m_timerRepeating;
 
+	void startTimerInternal(TimerTask* timerListener, int duration, int timerId, bool repeating);
 	void runTimerInternal();
 	void sleepFor(int duration);
 };

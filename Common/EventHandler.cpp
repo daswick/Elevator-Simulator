@@ -38,8 +38,10 @@ void EventHandler::publishEvent(BaseEvent* pEvent) {
 		return;
 	}
 
+	std::shared_ptr<BaseEvent> pSharedEvent(pEvent);
+
 	for (EventListener* listener : m_listenerSet) {
-		listener->handleEvent(pEvent);
+		listener->handleEvent(pSharedEvent.get());
 	}
 }
 

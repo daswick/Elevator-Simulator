@@ -84,7 +84,7 @@ void SignalReceiver::sendMessage(int msgkey, Signal msg) {
 	msg.m_type = 1;
 	msg.m_data[2] = msgkey;
 
-	if (msgsnd(messageId, &msg, 5, 0) == ERROR) {
+	if (msgsnd(messageId, &msg, 3, 0) == ERROR) {
 		SAFEPRINT("Failed to send message");
 	}
 }

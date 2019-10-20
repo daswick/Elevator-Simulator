@@ -6,8 +6,7 @@
 
 namespace elevator {
 
-Elevator::Elevator(std::string id)
-{
+Elevator::Elevator(std::string id) {
 	m_elevatorId = id;
 	m_isStarted = false;
 	m_currentFloor = 0;
@@ -67,20 +66,45 @@ void Elevator::stop() {
 	m_isStarted = false;
 }
 
-void Elevator::coreTimerCallback() {
+void Elevator::coreTimerCallback(int timerId) {
+	if (timerId == TimerIDs::FloorChange) {
+		moveElevator();
+	}
+	else if (timerId == TimerIDs::DoorOpen) {
+		onDestinationReached();
+	} else {
+		SAFEPRINT("Elevator::coreTimerCallback received unknown timer id " + std::to_string(timerId));
+	}
+}
+
+void Elevator::moveElevator() {
 	m_currentFloor += (m_direction == Direction::UP) ? 1 : -1;
 	m_pSignalHandler->sendSignal(SignalHandler::SignalTypes::ELEVATOR_FLOOR_STATUS, m_currentFloor);
 
-	std::lock_guard<std::mutex> guard(m_queueMutex);
-	if (m_destinationQueue.top() == m_currentFloor) {
-		m_destinationQueue.pop();
-		m_pSignalHandler->sendSignal(SignalHandler::SignalTypes::ELEVATOR_DESTINATION_REACHED, m_currentFloor);
-	}
+	checkForDestination();
+}
 
+void Elevator::checkForDestination() {
+	std::lock_guard<std::mutex> guard(m_queueMutex);
+
+	std::unordered_set<int>::iterator it = m_destinationQueue.find(m_currentFloor);
+	if (it != m_destinationQueue.end()) {
+		SAFEPRINT("Elevator " + m_elevatorId + " is opening its door on floor " + std::to_string(m_currentFloor));
+		m_destinationQueue.erase(it);
+		m_pSignalHandler->sendSignal(SignalHandler::SignalTypes::ELEVATOR_DESTINATION_REACHED, m_currentFloor);
+		m_pElevatorTimer->cancelTimer();
+		m_pElevatorTimer->startSingleTimer(this, k_destinationReachedDuration, static_cast<int>(TimerIDs::DoorOpen));
+	}
+}
+
+void Elevator::onDestinationReached() {
+	SAFEPRINT("Elevator " + m_elevatorId + " is closing its door on floor " + std::to_string(m_currentFloor));
+	m_pElevatorTimer->cancelTimer();
 	if (m_destinationQueue.size() == 0) {
 		m_direction = Direction::NONE;
 		m_pSignalHandler->sendSignal(SignalHandler::SignalTypes::ELEVATOR_DIRECTION_CHANGE, static_cast<int>(m_direction));
-		m_pElevatorTimer->cancelTimer();
+	} else {
+		m_pElevatorTimer->startRepeatingTimer(this, k_floorChangeDuration, static_cast<int>(TimerIDs::FloorChange));
 	}
 }
 
@@ -104,13 +128,13 @@ void Elevator::addDestination(int destination) {
 
 	{
 		std::lock_guard<std::mutex> guard(m_queueMutex);
-		m_destinationQueue.push(destination);
+		m_destinationQueue.insert(destination);
 	}
 
 	if (m_direction == Direction::NONE) {
 		m_direction = (destination < m_currentFloor) ? Direction::DOWN : Direction::UP;
 		m_pSignalHandler->sendSignal(SignalHandler::SignalTypes::ELEVATOR_DIRECTION_CHANGE, static_cast<int>(m_direction));
-		m_pElevatorTimer->startRepeatingTimer(this, k_floorChangeDuration);
+		m_pElevatorTimer->startRepeatingTimer(this, k_floorChangeDuration, static_cast<int>(TimerIDs::FloorChange));
 	}
 }
 

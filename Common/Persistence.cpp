@@ -1,13 +1,23 @@
 #include "Persistence.hpp"
 
+#include "SafePrint.hpp"
+
 #include <fstream>
 #include <iterator>
+#include <sys/stat.h>
 
 namespace common {
 
 void Persistence::loadPersistedData(std::string fileName) {
 	if (m_isDataLoaded) {
 		return;
+	}
+
+	if (mkdir(k_persistPath.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == -1) {
+		if (errno != EEXIST) {
+			SAFEPRINT("Persistence failed to create directory " + k_persistPath + " with errno " + std::to_string(errno));
+			return;
+		}
 	}
 
 	std::lock_guard<std::mutex> guard(m_dataMutex);
