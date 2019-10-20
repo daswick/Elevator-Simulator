@@ -1,5 +1,7 @@
 #include "SignalHandler.hpp"
 
+#include "events/DestinationReachedEvent.hpp"
+#include "events/DirectionChangedEvent.hpp"
 #include "events/FloorStatusEvent.hpp"
 
 #include "../Common/SafePrint.hpp"
@@ -54,16 +56,29 @@ void SignalHandler::stopReceivers() {
 }
 
 void SignalHandler::handleSignal(common::Signal msg) {
-	SAFEPRINT("Controller received signal " + m_pSignalReceiver->getSignalName(int(msg.m_data[0]))
+	int signalType = int(msg.m_data[0]);
+	SAFEPRINT("Controller received signal " + m_pSignalReceiver->getSignalName(signalType)
 			+ " with data " + std::to_string(int(msg.m_data[1])));
 
-	if (int(msg.m_data[0]) == static_cast<int>(SignalTypes::ELEVATOR_FLOOR_STATUS)) {
+	if (signalType == static_cast<int>(SignalTypes::ELEVATOR_FLOOR_STATUS)) {
 		int floor = int(msg.m_data[1]);
 		int elevatorId = int(msg.m_data[2]) & 0xF;
 		FloorStatusEvent* pEvent = new FloorStatusEvent(floor, elevatorId);
 		m_pEventHandler->publishEvent(pEvent);
+	}
+	else if (signalType == static_cast<int>(SignalTypes::ELEVATOR_DESTINATION_REACHED)) {
+		int floor = int(msg.m_data[1]);
+		int elevatorId = int(msg.m_data[2]) & 0xF;
+		DestinationReachedEvent* pEvent = new DestinationReachedEvent(floor, elevatorId);
+		m_pEventHandler->publishEvent(pEvent);
+	}
+	else if (signalType == static_cast<int>(SignalTypes::ELEVATOR_DIRECTION_CHANGE)) {
+		int direction = int(msg.m_data[1]);
+		int elevatorId = int(msg.m_data[2]) & 0xF;
+		DirectionChangedEvent* pEvent = new DirectionChangedEvent(direction, elevatorId);
+		m_pEventHandler->publishEvent(pEvent);
 	} else {
-		// TODO: Other signals
+		SAFEPRINT("Controller::SignalHandler received unknown signal type " + std::to_string(signalType));
 	}
 }
 

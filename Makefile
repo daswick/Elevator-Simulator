@@ -1,5 +1,5 @@
 CXX      := ccache g++
-CXXFLAGS := -pedantic-errors -Wall -Wextra -Werror -std=c++14 -Wno-unused-parameter
+CXXFLAGS := -pedantic-errors -Wall -Wextra -Werror -std=c++14 -Wno-unused-parameter -g
 LDFLAGS  := -pthread
 BUILD    := ../build
 OBJ_DIR  := $(BUILD)/objects

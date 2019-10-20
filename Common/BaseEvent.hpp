@@ -13,7 +13,7 @@ public:
 	inline std::string getEventName() { return m_eventName; }
 
 protected:
-	std::string m_eventName;
+	std::string m_eventName = "BaseEvent";
 };
 
 } /* common */

@@ -11,24 +11,15 @@ CoreTimer::~CoreTimer() {
 	cancelTimer();
 }
 
-void CoreTimer::startSingleTimer(TimerTask* timerListener, int duration) {
-	if (timerListener == nullptr) {
-		return;
-	}
-
-	if (m_timerRunning) {
-		return;
-	}
-
-	m_timerListener = timerListener;
-	m_timerDuration = duration;
-	m_timerRepeating = false;
-
-	m_timerThread = std::thread(&common::CoreTimer::runTimerInternal, this);
-	m_timerThread.detach();
+void CoreTimer::startSingleTimer(TimerTask* timerListener, int duration, int timerId) {
+	startTimerInternal(timerListener, duration, timerId, false);
 }
 
-void CoreTimer::startRepeatingTimer(TimerTask* timerListener, int duration) {
+void CoreTimer::startRepeatingTimer(TimerTask* timerListener, int duration, int timerId) {
+	startTimerInternal(timerListener, duration, timerId, true);
+}
+
+void CoreTimer::startTimerInternal(TimerTask* timerListener, int duration, int timerId, bool repeating) {
 	if (timerListener == nullptr) {
 		return;
 	}
@@ -39,7 +30,8 @@ void CoreTimer::startRepeatingTimer(TimerTask* timerListener, int duration) {
 
 	m_timerListener = timerListener;
 	m_timerDuration = duration;
-	m_timerRepeating = true;
+	m_timerId = timerId;
+	m_timerRepeating = repeating;
 
 	m_timerThread = std::thread(&common::CoreTimer::runTimerInternal, this);
 	m_timerThread.detach();
@@ -65,7 +57,7 @@ void CoreTimer::runTimerInternal() {
 		sleepFor(m_timerDuration);
 
 		if (m_timerRunning) {
-			m_timerListener->coreTimerCallback();
+			m_timerListener->coreTimerCallback(m_timerId);
 		}
 
 		if (!m_timerRepeating) {
