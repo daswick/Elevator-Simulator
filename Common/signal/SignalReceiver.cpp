@@ -15,16 +15,18 @@ SignalReceiver::~SignalReceiver() {
 }
 
 void SignalReceiver::start(int key) {
+	// If the key currently exists, return. Otherwise, insert it
 	{
 		std::lock_guard<std::mutex> guard(m_messageMutex);
-		std::set<int>::iterator it = m_messageIds.find(key);;
+		std::set<int>::iterator it = m_messageIds.find(key);
 		if (it != m_messageIds.end()) {
 			return;
 		}
 		m_messageIds.insert(key);
 	}
 
-	m_isRunning = true;
+	// Create key used for message passing. 0660 indicates it has read/write access
+	// And IPC_CREAT signifies it should create it if it does not exist
 	key_t msgkey = ftok(".", key);
 	int messageId = msgget(msgkey, IPC_CREAT | 0660);
 
@@ -33,9 +35,10 @@ void SignalReceiver::start(int key) {
 }
 
 void SignalReceiver::stop(int key) {
+	// If the key does not exist, return. Otherwise, remove it
 	{
 		std::lock_guard<std::mutex> guard(m_messageMutex);
-		std::set<int>::iterator it = m_messageIds.find(key);;
+		std::set<int>::iterator it = m_messageIds.find(key);
 		if (it != m_messageIds.end()) {
 			return;
 		}
@@ -45,8 +48,6 @@ void SignalReceiver::stop(int key) {
 	key_t msgkey = ftok(".", key);
 	int messageId = msgget(msgkey, IPC_CREAT | 0660);
 
-	m_isRunning = (m_messageIds.size() == 0);
-
 	msgctl(messageId, IPC_RMID, NULL);
 }
 
@@ -55,6 +56,7 @@ void SignalReceiver::addListener(ISignalListener* pListener) {
 		return;
 	}
 
+	// Since m_pReceiverList is a set, this will not create a duplicate
 	m_pReceiverList.insert(pListener);
 }
 
@@ -63,6 +65,7 @@ void SignalReceiver::removeListener(ISignalListener* pListener) {
 		return;
 	}
 
+	// If the listener is in the list, remove it
 	std::set<ISignalListener*>::iterator it = m_pReceiverList.find(pListener);
 	if (it != m_pReceiverList.end()) {
 		m_pReceiverList.erase(it);
@@ -76,6 +79,7 @@ std::string SignalReceiver::getSignalName(int id) {
 void SignalReceiver::sendMessage(int msgkey, Signal msg) {
 	key_t key = ftok(".", msgkey);
 
+	// If the receiving end is closed, this will return -1
 	int messageId = msgget(key, 0660);
 	if (messageId == ERROR) {
 		return;
@@ -84,7 +88,8 @@ void SignalReceiver::sendMessage(int msgkey, Signal msg) {
 	msg.m_type = 1;
 	msg.m_data[2] = msgkey;
 
-	if (msgsnd(messageId, &msg, 3, 0) == ERROR) {
+	// This will wake up the receiving thread to read the signal
+	if (msgsnd(messageId, &msg, k_bufferSize, 0) == ERROR) {
 		SAFEPRINT("Failed to send message");
 	}
 }
@@ -94,13 +99,16 @@ void SignalReceiver::receiveMessages(int messageId) {
 		return;
 	}
 
+	// Attempt to receive messages (blocking) until an error is received
+	// An error will be produced when the message queue is terminated
 	Signal msg;
 	while (true) {
-		int status = msgrcv(messageId, &msg, 5, 1, 0);
+		int status = msgrcv(messageId, &msg, k_bufferSize, 1, 0);
 		if (status == ERROR) {
 			break;
 		}
 
+		// Notify all listeners of a new message
 		for (ISignalListener* listener : m_pReceiverList) {
 			listener->handleSignal(msg);
 		}

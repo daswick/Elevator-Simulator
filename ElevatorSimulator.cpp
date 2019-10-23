@@ -20,14 +20,6 @@ ElevatorSimulator::ElevatorSimulator(int elevatorCount) {
 	m_pController = nullptr;
 }
 
-ElevatorSimulator::~ElevatorSimulator() {
-	for (int i = 0; i < m_elevatorCount; i++) {
-		delete m_pElevatorList[i];
-	}
-
-	delete m_pController;
-}
-
 void ElevatorSimulator::start() {
 	startController(m_elevatorCount);
 
@@ -46,7 +38,7 @@ void ElevatorSimulator::stop() {
 
 void ElevatorSimulator::startElevator(int id) {
 	if (m_pElevatorList[id] == nullptr) {
-		m_pElevatorList[id] = new elevator::Elevator(std::to_string(id));
+		m_pElevatorList[id] = std::make_unique<elevator::Elevator>(std::to_string(id));
 	}
 
 	if (m_pElevatorList[id]->hasStarted()) {
@@ -70,7 +62,7 @@ void ElevatorSimulator::stopElevator(int id) {
 
 void ElevatorSimulator::startController(int numElevators) {
 	if (m_pController == nullptr) {
-		m_pController = new controller::Controller(numElevators);
+		m_pController = std::make_unique<controller::Controller>(numElevators);
 	}
 
 	if (m_pController->hasStarted()) {

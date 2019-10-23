@@ -33,6 +33,7 @@ void CoreTimer::startTimerInternal(TimerTask* timerListener, int duration, int t
 	m_timerId = timerId;
 	m_timerRepeating = repeating;
 
+	// To allow for the program to run more efficiently, have the timer on its own separate thread
 	m_timerThread = std::thread(&common::CoreTimer::runTimerInternal, this);
 	m_timerThread.detach();
 }
@@ -56,10 +57,12 @@ void CoreTimer::runTimerInternal() {
 	while (m_timerRunning) {
 		sleepFor(m_timerDuration);
 
+		// If the timer was cancelled, a callback should not be processed
 		if (m_timerRunning) {
 			m_timerListener->coreTimerCallback(m_timerId);
 		}
 
+		// If the timer is non-repeating, this allows the loop to only run once
 		if (!m_timerRepeating) {
 			break;
 		}
@@ -71,6 +74,8 @@ void CoreTimer::runTimerInternal() {
 void CoreTimer::sleepFor(int duration) {
 	int elapsedTime = 0;
 
+	// Keeping track of the time passed, take microsleeps until rather the requested duration has been met
+	// Or the timer gets cancelled
 	while (elapsedTime <= duration) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(k_timerSleepDuration));
 		elapsedTime += k_timerSleepDuration;

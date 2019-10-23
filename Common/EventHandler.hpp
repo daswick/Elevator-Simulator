@@ -19,12 +19,6 @@ public:
 		~EventListener() = default;
 
 		virtual inline void handleEvent(BaseEvent* pEvent) { /* not implemented */}
-
-		inline void setListenerName(std::string name) { m_listenerName = name; }
-		inline std::string getListenerName() { return m_listenerName; }
-
-	private:
-		std::string m_listenerName;
 	};
 
 	void addListener(EventListener* pListener);
