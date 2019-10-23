@@ -24,8 +24,6 @@ public:
 
 	void handleEvent(common::BaseEvent* pEvent);
 
-	void demo();
-
 private:
 	enum ElevatorDirection {
 		NONE = 0x0,
@@ -38,6 +36,9 @@ private:
 		int direction;
 		int numDestinations;
 	};
+
+	const int k_floorChange = 2;
+	const int k_destinationReached = 5;
 
 	int m_numElevators;
 	std::shared_ptr<SignalHandler> m_pSignalHandler;

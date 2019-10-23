@@ -42,7 +42,7 @@ public:
 	void sendMessage(int msgkey, Signal msg);
 
 private:
-	bool m_isRunning = false;
+	const int k_bufferSize = 3;
 
 	std::mutex m_messageMutex;
 	std::set<int> m_messageIds;

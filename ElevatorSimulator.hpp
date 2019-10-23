@@ -4,13 +4,14 @@
 #include "Controller/Controller.hpp"
 #include "Elevator/Elevator.hpp"
 
+#include <memory>
 #include <vector>
 
 class ElevatorSimulator {
 public:
 	ElevatorSimulator();
 	ElevatorSimulator(int elevatorCount);
-	~ElevatorSimulator();
+	~ElevatorSimulator() = default;
 
 	void start();
 	void stop();
@@ -18,8 +19,8 @@ public:
 private:
 	int m_elevatorCount;
 	
-	std::vector<elevator::Elevator*> m_pElevatorList;
-	controller::Controller* m_pController;
+	std::vector<std::unique_ptr<elevator::Elevator>> m_pElevatorList;
+	std::unique_ptr<controller::Controller> m_pController;
 	
 	void startElevator(int id);
 	void stopElevator(int id);

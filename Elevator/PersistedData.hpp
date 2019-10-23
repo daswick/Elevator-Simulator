@@ -10,7 +10,7 @@ namespace elevator {
 class PersistedData : public common::Persistence {
 public:
 	PersistedData(std::string elevatorId);
-	~PersistedData();
+	~PersistedData() = default;
 
 	void start();
 	void stop();
